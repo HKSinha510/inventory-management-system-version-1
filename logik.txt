@@ -1,0 +1,104 @@
+**eminem music intensifies* intensifies*
+#biboblgraphy
+www.stackoverflow.com
+dev.mysql.com
+geeksforgeeks.com
+w3school.com
+
+
+
+pehle data hona chahiye, no data no application \\* check data availability & data insertion for new system 
+data 
+
+system
+
+basic idea: inventory, order/billing, empolyes, and then analytics
+
+3 basic table, inventory . order . empolye, 
+
+
+INVENTORY 
+1. product id(proid which is different for all product, same genre of product will have same code, batch code will different
+\ the code found in product's barcode, primary key, unique)[varchar(50)]
+
+2. name - name, unique and primary(if needed) [varchar(250)]
+
+
+now stocks, on what basis can we store our stocks?
+expiry(goods which are going to get expired need to sold fast)
+availability(how much is there in my store) (hmm, we can trigger a piece of code that tell to order more, hmm intersting, yum)
+demands also is a factor but how will i be stored in db
+Area code for store: the area where is product is(store and garage)
+area code for godam
+
+
+
+3. availabe amount   bigint, or int maybe
+
+4 . expiry date, idk, varchar bhi chalega
+
+5. rate, veri important
+
+6. gst hmm yeh dekhna padega, har ek pe lagta hai ya total pe, 
+
+hogaya ig aur kya add kar sakte hai, manufacturer, order kaha se kiya, weight wagera bhi kar sakte hai, will see, uski jarurat nahi padni chahiye
+
+ORDER
+
+1.  order id -  [varchar()]
+
+2. ordered's name varchar
+
+3. phone number -  veri important
+
+4. order's address varchar
+
+5 order kya kiya - this is complex, ek admi multiple product order kar sakta hai, lekin ek entry me ek hi product enter hoga except if i use json format, json aprroved
+toh fir json esse karte hai {order: [list of product in proid], amount: [], least expiry of a product: hmm, 2, amount: calculate from product id from 'order' in inventory table se nikal ke}
+iske alag variation bhi kar sakte hai `{ order: {proid: number of item}`,.....}            yeh sahi lag raha hai
+ya { order: {proid: rate},....} for easy calculation
+
+5. total_ammount
+
+6. base_ammount 
+
+
+EMPLOYEEE
+
+1 emp_id - varchar
+
+2. name - varchar
+
+3. salary int
+
+4. designation - varchar
+
+5. department - varchar
+
+#personal information 
+
+6. phone number - bigint
+
+7. age - int
+
+8. dob - date
+
+9. address - varchar
+
+10. benifits - int  
+
+
+for analytics
+```py
+SELECT order_id
+FROM orders
+WHERE SUBSTRING(order_id, 5, 2) = '06';
+```
+
+
+
+
+
+noteitdown
+
+
