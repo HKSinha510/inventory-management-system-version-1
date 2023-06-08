@@ -4,6 +4,7 @@ main file
 '''
 # TODO: add debug log, if debug set to true then print the step
 # 2) write a check for system date, because orderid uses sysdate(), if system date will be incorerct it will mess up whole system
+# 3) line 17, will possible have to rewrite many lines
 
 import json
 import mysql.connector as ms
@@ -90,13 +91,15 @@ def give_data():
     return items
 
 def perform_action(ipt):
-    con = connection('myseql', db='shop')
-    cur = con.cursor()
-    while ipt != 2:
-        if ipt == 1:
+    while ipt != '2':
+        if ipt == '1':
             lst = give_data()
-            print(lst)
-        print("Available action(use numbers to select):\n1: View Items\n2: Place Order\n3: Credits\nAction:")
+            print("Product ID\tName\tRate")
+            for product in lst:
+                print(f"{product}\t{lst[product][0]}\t{lst[product][3]}")
+        ipt = input("Available action(use numbers to select):\n1: View Items\n2: Place Order\n3: Credits\nAction:")
+
+    print("Taking Order")
 
 
 def admin():
