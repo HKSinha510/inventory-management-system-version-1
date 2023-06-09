@@ -5,11 +5,14 @@ main file
 # TODO: add debug log, if debug set to true then print the step
 # 2) write a check for system date, because orderid uses sysdate(), if system date will be incorerct it will mess up whole system
 # 3) line 17, will possible have to rewrite many lines
+# 4) if gui fails, then at least add color text
 
 import json
 import mysql.connector as ms
+from tabulate import tabulate
 
 def connection(password:str, host:str = 'localhost', user:str = 'root', db:str = None):  # use .is_connected to get status, if status == False then restart
+    #print things only when debug set to true, because when running in program, it interupt between session
     try:
         cnx = ms.connect(host = host, user = user, passwd=password, database = db)
         print('Connection established!')
@@ -94,15 +97,36 @@ def perform_action(ipt):
     while ipt != '2':
         if ipt == '1':
             lst = give_data()
-            print("Product ID\tName\tRate")
+            header = ["Product ID", "Product Name", "Price"]
+            table = []
             for product in lst:
-                print(f"{product}\t{lst[product][0]}\t{lst[product][3]}")
-        ipt = input("Available action(use numbers to select):\n1: View Items\n2: Place Order\n3: Credits\nAction:")
+                table.append([product,lst[product][0],lst[product][3]])
 
-    print("Taking Order")
+            print(tabulate(table, header, tablefmt="pretty"))
 
+        elif ipt == '3':
+            print("Made Using Python🐍, by Hardik")
 
-def admin():
+        elif ipt == '4':
+            return
+
+        else:
+            print("Please enter a valid number")
+
+        ipt = input("Available action(use numbers to select):\n1: View Items\n2: Place Order\n3: Credits\n4: Exit\nAction:")
+
+    print("To place Order Enter Product Id and then the quantity of that product")
+
+    while True:
+        pid = input("Enter Product Id: ")
+        quantity = input(f"Quantity of {give_data()[pid.upper()][0]}: ")
+
+        print(pid, quantity)
+
+        ask = input("Enter to Continue, b for billing")
+        if ask == 'b': break
+    
+def admin(): #admin commands, direct access to database and table, eval access for direct interpretation of code
     pass
 
 if __name__ == '__main__': 
@@ -118,7 +142,6 @@ if __name__ == '__main__':
             action = input("Available action(use numbers to select):\n1: View Items\n2: Place Order\n3: Credits\nAction: ")
             perform_action(action)
             inner_loop = False
-        print('ss')
         q = input('Press Enter to continue...\n\n')
         inner_loop = True
         
