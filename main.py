@@ -8,6 +8,7 @@ main file
 # 4) if gui fails, then at least add color text
 
 import json
+from time import sleep
 import mysql.connector as ms
 from tabulate import tabulate
 
@@ -15,7 +16,7 @@ def connection(password:str, host:str = 'localhost', user:str = 'root', db:str =
     #print things only when debug set to true, because when running in program, it interupt between session
     try:
         cnx = ms.connect(host = host, user = user, passwd=password, database = db)
-        print('Connection established!')
+        # print('Connection established!')
 
         return cnx #also return cursor, so in case of error it won't error up
     
@@ -30,6 +31,7 @@ def connection(password:str, host:str = 'localhost', user:str = 'root', db:str =
     
 
 def place_order(cons_name:str, phno:int, list_of_products:dict, address:str = None):   #lop ==>  {proid: number of item, proid2: number of item}
+    #configure the whole 2) place order in this function
     con = connection('myseql', db='shop')
     cur = con.cursor()
 
@@ -69,8 +71,9 @@ def place_order(cons_name:str, phno:int, list_of_products:dict, address:str = No
             list_of_products.pop(product)
             print(f'Product({product}) not found')
 
+    sleep(1)
+
     query = f"INSERT INTO orders VALUES({order_id}, '{cons_name}', {phno}, '{address or None}', '{json.dumps(list_of_products)}', {total_amount}, {base_amount})"
-    print(query)
     cur.execute(query)
     con.commit()
 
@@ -117,17 +120,45 @@ def perform_action(ipt):
 
     print("To place Order Enter Product Id and then the quantity of that product")
 
+    order = {}
+
     while True:
-        pid = input("Enter Product Id: ")
-        quantity = input(f"Quantity of {give_data()[pid.upper()][0]}: ")
+        pid = input("Enter Product Id: ").upper()
+        quantity = int(input(f"Quantity of {give_data()[pid][0]}: "))
+        order[pid] = quantity
+        place_order(name, phno, order, address)
 
         print(pid, quantity)
 
         ask = input("Enter to Continue, b for billing")
-        if ask == 'b': break
+        if ask == 'b': 
+
+            break
     
 def admin(): #admin commands, direct access to database and table, eval access for direct interpretation of code
-    pass
+    pswd = input("Enter password: ")
+    if pswd:
+        while True:
+            adm = int(input("0, 1"))
+            if not adm:
+                print("Eval")
+                text = input("Enter text for evalution: ")
+                eval(text)
+        
+            elif adm:
+                print("db access")
+                con = connection('myseql', db="shop")
+                cur = con.cursor()
+
+                query = input("query: ")
+                cur.execute(query)
+                try:
+                    print(cur.fetchall())
+                except:
+                    pass
+
+            else:
+                return
 
 if __name__ == '__main__': 
     inner_loop = True
