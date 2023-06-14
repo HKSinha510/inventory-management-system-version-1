@@ -126,13 +126,12 @@ def perform_action(ipt):
         pid = input("Enter Product Id: ").upper()
         quantity = int(input(f"Quantity of {give_data()[pid][0]}: "))
         order[pid] = quantity
-        place_order(name, phno, order, address)
 
         print(pid, quantity)
 
         ask = input("Enter to Continue, b for billing")
         if ask == 'b': 
-
+            place_order(name, phno, order, address)
             break
     
 def admin(): #admin commands, direct access to database and table, eval access for direct interpretation of code
