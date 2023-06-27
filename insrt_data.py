@@ -11,8 +11,62 @@ def stnd_date(input_date:str, input_format:str = "%d-%m-%Y", output_format:str =
 
     return standard_date
 
+def check_database(mysql_connection) -> None:
+    '''
+    This function check database and tables.\n
+    This function will make sure that the db and tables exists and are empty before entering any data.\n
+    *Disabled* This function not clear any exisiting data in table `orders`.
 
-def insert_data(FILENAME : str, MODE : str = 'a'): 
+    :mod:`mysql_conenction`: mysql connector data pool
+    '''
+    DB = "shop"
+    TABLES = ["orders", "inventory", "employee"]
+    CREATE_TABLE = {"orders": "CREATE TABLE orders(orderid VARCHAR(255) NOT NULL, consumer_name VARCHAR(255) NOT NULL, consumer_phnno bigint NOT NULL, consumer_address varchar(255), order_item json NOT NULL, total_amount INT NOT NULL, base_amount INT NOT NULL);", "inventory": "CREATE TABLE inventory(product_id VARCHAR(50) UNIQUE PRIMARY KEY NOT NULL, name VARCHAR(250) UNIQUE, in_stock INT NOT NULL, expiry DATE, rate INT NOT NULL, gst SMALLINT, manufacturer VARCHAR(200));", "employee": "CREATE TABLE employee(emp_id VARCHAR(255) PRIMARY KEY NOT NULL, name VARCHAR(128) UNIQUE, slary INT, dsgn VARCHAR(128), dpmt VARCHAR(128), phno BIGINT NOT NULL, age INT NOT NULL, dob DATE NOT NULL, address VARCHAR(255), benifit INT);"}
+    DATABASE_EXIST = False
+    TABLES_EXIST = False        #VARIABLE ARE NAMED SIMMILAR, BUT THEY POTRAIT DIFEERENT CHARACTER/PROPERTIES IN TERMS 
+
+    if len(TABLES) != len(CREATE_TABLE): raise Exception("Table tally check failed\nlength of `TABLES` and `CREATE_TABLE` is not same") 
+
+    cur = mysql_connection.cursor()
+
+    cur.execute("SHOW DATABASES;")  #CHEKING DATABASE
+    for i in cur.fetchall():
+        if DB in i[0]:
+            DATABASE_EXIST = True
+            cur.execute(f"USE {DB};")
+            cur.fetchall()
+
+    if not DATABASE_EXIST:
+        cur.execute(f"CREATE DATABASE {DB};")
+        cur.fetchall()
+        cur.execute(f"USE {DB};")
+        cur.fetchall()
+
+    #CHEKING TABLES
+    cur.execute("SHOW TABLES;")
+    temp_list_of_tables = []
+    list_of_table_in_db = cur.fetchall()
+    for i in list_of_table_in_db:
+        if list_of_table_in_db != "":
+            TABLES_EXIST = True
+            temp_list_of_tables.append(str(i[0]))
+
+    #checking if the tables in database are same as what we need
+    if set(temp_list_of_tables) == set(TABLES): #if yes, then clear the data of the table
+        for i in temp_list_of_tables:
+            cur.execute(f"delete * from {i};")
+            cur.fetchall()
+    else: #delete exisiting table and create new table for data to be entered in insert_data()
+        if TABLES_EXIST:        #cheking in table exists in db, if yes then remove the tables, 
+            for i in temp_list_of_tables:
+                cur.execute(f"drop table {i}")           #then make new tables
+
+        #creating new tables
+        for i in TABLES:
+            cur.execute(CREATE_TABLE[i])
+
+
+def insert_data(FILENAME : str = "data.csv", MODE : str = 'a'): 
     '''This function is used to make and insert data in a database.
 Use this function when there is no data to use the program, as this program requires some data to perform activities. Using this function you can get a sample database\nCAUTION: if a database with name `shop` exists then it will be cleared and new data will be inserted
 
@@ -22,13 +76,17 @@ MODE = 'a' for automatic, i for inventory, o for order & e for employee table'''
     # Todo 1) add logik to remove and recreate table if it exisits in future, 2) set up auto
     #table = 'inventory' if MODE == 'i' else 'orders' if MODE == 'o' else 'employee'
 
+    con = connection('myseql')
+    cur = con.cursor()
+
+    check_database(con)
+
     path = f"bin/{FILENAME}"
     data = open(path, 'r').read().split('\n')
+    #fix this man, can't be working like this, i'm paying you for quality not for quantity --> add auto
+
     if len(data) != 1:
-        #data  nt corrupedd
-        con = connection('myseql', db='shop')
-        cur = con.cursor()
-       
+        #data  nt corrupedd       
         for i in data:
             if i != '':
                 #checks for null, check for table
@@ -74,5 +132,4 @@ MODE = 'a' for automatic, i for inventory, o for order & e for employee table'''
             pass #return, connection doesnot exist
 
 if __name__ == '__main__':
-    #insert_data()
     print(insert_data('data.csv', 'i'))
