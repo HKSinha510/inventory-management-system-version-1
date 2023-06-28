@@ -9,8 +9,23 @@ main file
 
 import json
 from time import sleep
-import mysql.connector as ms
-from tabulate import tabulate
+import os
+from tkinter import messagebox
+
+a = 0
+while a < 5:
+    try:
+        import mysql.connector as ms
+        from tabulate import tabulate
+        
+    except Exception as e:
+        messagebox.showwarning("Import Error", f"Module not found\n{e}\n\nClick OK to install module")
+        os.system("pip install tabulate")
+        os.system("pip install mysql-connector-python")
+        a += 1
+    
+else:
+    os._exit(0)
 
 def connection(password:str, host:str = 'localhost', user:str = 'root', db:str = None):  # use .is_connected to get status, if status == False then restart
     #print things only when debug set to true, because when running in program, it interupt between session
