@@ -17,6 +17,7 @@ while a < 5:
     try:
         import mysql.connector as ms
         from tabulate import tabulate
+        break
         
     except Exception as e:
         messagebox.showwarning("Import Error", f"Module not found\n{e}\n\nClick OK to install module")
