@@ -34,7 +34,6 @@ def check_database(mysql_connection) -> None:
         if DB in i[0]:
             DATABASE_EXIST = True
             cur.execute(f"USE {DB};")
-            cur.fetchall()
 
     if not DATABASE_EXIST:
         cur.execute(f"CREATE DATABASE {DB};")
