@@ -5,7 +5,7 @@ main file
 # TODO: add debug log, if debug set to true then print the step
 # 2) write a check for system date, because orderid uses sysdate(), if system date will be incorerct it will mess up whole system
 # 3) line 17, will possible have to rewrite many lines
-# 4) if gui fails, then at least add color text
+# 4) if gui fails, then at least add colored text
 
 import json
 from time import sleep

@@ -17,7 +17,7 @@ creating table
 [![image.png](https://i.postimg.cc/hPFYFs12/image.png)](https://postimg.cc/14HBwpTF)
 
 **order** \
-__note__: null change hua hai
+__note__: null & column/attributes change hua hai
 
 [![image.png](https://i.postimg.cc/YSXNfzR1/image.png)](https://postimg.cc/hJd7KxHj)
 
