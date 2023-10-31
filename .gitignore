@@ -1,5 +1,6 @@
 # User Defined
-/dustbin
+dustbin/
+/dustbin/Galaxy/
 .vscode/
 
 # Byte-compiled / optimized / DLL files
