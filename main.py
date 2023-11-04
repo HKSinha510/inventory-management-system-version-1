@@ -12,17 +12,20 @@ from time import sleep
 import os
 from tkinter import messagebox
 
+#Checking & installing external modules
 a = 0
-while a < 5:
+while a < 3:
     try:
         import mysql.connector as ms
         from tabulate import tabulate
         break
         
-    except Exception as e:
+    except ImportError as e:
+        print("Press 'OK' in the dialog box.")
         messagebox.showwarning("Import Error", f"Module not found\n{e}\n\nClick OK to install module")
         os.system("pip install tabulate")
         os.system("pip install mysql-connector-python")
+        os.system("cls")
         a += 1
     
 else:
@@ -32,9 +35,10 @@ def connection(password:str, host:str = 'localhost', user:str = 'root', db:str =
     #print things only when debug set to true, because when running in program, it interupt between session
     try:
         cnx = ms.connect(host = host, user = user, passwd=password, database = db)
+        cur = cnx.cursor()
         # print('Connection established!')
 
-        return cnx #also return cursor, so in case of error it won't error up
+        return cnx, cur
     
     except ms.Error as err:
         if err.errno == ms.errorcode.ER_ACCESS_DENIED_ERROR:
@@ -48,8 +52,8 @@ def connection(password:str, host:str = 'localhost', user:str = 'root', db:str =
 
 def place_order(cons_name:str, phno:int, list_of_products:dict, address:str = None):   #lop ==>  {proid: number of item, proid2: number of item}
     #configure the whole 2) place order in this function
-    con = connection('myseql', db='shop')
-    cur = con.cursor()
+    con, cur = connection('myseql', db='shop')
+    #cur = con.cursor()
 
     cur.execute('select * from inventory')
     data = cur.fetchall()
@@ -96,8 +100,8 @@ def place_order(cons_name:str, phno:int, list_of_products:dict, address:str = No
     con.close()
 
 def give_data():
-    con = connection('myseql', db='shop')
-    cur = con.cursor()
+    con, cur = connection('myseql', db='shop')
+    #cur = con.cursor()
 
     cur.execute('select * from inventory')
     data = cur.fetchall()
@@ -162,8 +166,8 @@ def admin(): #admin commands, direct access to database and table, eval access f
         
             elif adm:
                 print("db access")
-                con = connection('myseql', db="shop")
-                cur = con.cursor()
+                con, cur = connection('myseql', db="shop")
+                #cur = con.cursor()
 
                 query = input("query: ")
                 cur.execute(query)

@@ -27,6 +27,7 @@ def check_database(mysql_connection) -> None:
 
     if len(TABLES) != len(CREATE_TABLE): raise Exception("Table tally check failed\nlength of `TABLES` and `CREATE_TABLE` is not same") 
 
+    !issue
     cur = mysql_connection.cursor()
 
     cur.execute("SHOW DATABASES;")  #CHEKING DATABASE
@@ -75,8 +76,8 @@ MODE = 'a' for automatic, i for inventory, o for order & e for employee table'''
     # Todo 1) add logik to remove and recreate table if it exisits in future, 2) set up auto
     #table = 'inventory' if MODE == 'i' else 'orders' if MODE == 'o' else 'employee'
 
-    con = connection('myseql')
-    cur = con.cursor()
+    con, cur = connection('myseql')
+    #cur = con.cursor()
 
     check_database(con)
 
