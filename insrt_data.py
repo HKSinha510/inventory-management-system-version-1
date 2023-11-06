@@ -15,7 +15,6 @@ def check_database(cur) -> None:
     '''
     This function check database and tables.\n
     This function will make sure that the db and tables exists and are empty before entering any data.\n
-    *Disabled* This function not clear any exisiting data in table `orders`.
 
     :mod:`mysql_conenction`: mysql connector data pool
     '''
@@ -26,9 +25,6 @@ def check_database(cur) -> None:
     TABLES_EXIST = False        #VARIABLE ARE NAMED SIMMILAR, BUT THEY POTRAIT DIFEERENT CHARACTER/PROPERTIES IN TERMS 
 
     if len(TABLES) != len(CREATE_TABLE): raise Exception("Table tally check failed\nlength of `TABLES` and `CREATE_TABLE` is not same") 
-
-    #!issue
-    #con, cur = mysql_connection
 
     cur.execute("SHOW DATABASES;")  #CHEKING DATABASE
     for i in cur.fetchall():
@@ -74,24 +70,20 @@ Use this function when there is no data to use the program, as this program requ
 MODE = 'a' for automatic, i for inventory, o for order & e for employee table'''
 
     status = False
-    # Todo 1) add logik to remove and recreate table if it exisits in future, 2) set up auto
     #table = 'inventory' if MODE == 'i' else 'orders' if MODE == 'o' else 'employee'
 
     con, cur = connection('myseql')
-    #cur = con.cursor()
 
     check_database(cur)
 
     path = f"bin/{FILENAME}"
     data = open(path, 'r').read().split('\n')
-    #fix this man, can't be working like this, i'm paying you for quality not for quantity --> add auto
 
     if len(data) != 1:
         #data  nt corrupedd       
         for i in data:
             if i != '':
                 #checks for null, check for table
-
                 if MODE == 'i':
                     data_table = i.split(',')
                     pid, name, stk, epry, rate, gst, mnftr = data_table

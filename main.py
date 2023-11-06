@@ -1,11 +1,4 @@
-'''
-main.py
-main file
-'''
-# TODO: add debug log, if debug set to true then print the step
-# 2) write a check for system date, because orderid uses sysdate(), if system date will be incorerct it will mess up whole system
-# 3) line 17, will possible have to rewrite many lines
-# 4) if gui fails, then at least add colored text
+#main file
 
 import json
 from time import sleep
@@ -31,12 +24,10 @@ while a < 3:
 else:
     os._exit(0)
 
-def connection(password:str, host:str = 'localhost', user:str = 'root', db:str = None):  # use .is_connected to get status, if status == False then restart
-    #print things only when debug set to true, because when running in program, it interupt between session
+def connection(password:str, host:str = 'localhost', user:str = 'root', db:str = None):
     try:
         cnx = ms.connect(host = host, user = user, passwd=password, database = db)
         cur = cnx.cursor()
-        # print('Connection established!')
 
         return cnx, cur
     
@@ -48,8 +39,7 @@ def connection(password:str, host:str = 'localhost', user:str = 'root', db:str =
         else:
             print(err)
 
-def place_order(cons_name:str, phno:int, address:str = None):   #lop ==>  {proid: number of item, proid2: number of item}
-    #configure the whole 2) place order in this function
+def place_order(cons_name:str, phno:int, address:str = None):
     con, cur = connection('myseql', db='shop')
 
     items = give_items()
@@ -70,13 +60,14 @@ def place_order(cons_name:str, phno:int, address:str = None):   #lop ==>  {proid
             if opid in items:
                 q = int(input(f'Quantity for "{items[opid][0]}": '))
                 if q <= items[opid][1]:
-                    #pid = rate, quantity, cost, gst, cost with taxes
+                
                     rate = items[opid][3]
                     cost = rate * q
                     gst = items[opid][4]/100
                     cost_with_tax = cost + (cost * gst)
+
                     ordered_item[opid] = [rate, q, cost, gst, cost_with_tax]
-#!issue date says none
+
                 else:
                     print(f"There are only {items[opid][1]} {items[opid][0]} remaining in our stock. Sorry we can't proceed with your request.")
 
@@ -122,6 +113,7 @@ def place_order(cons_name:str, phno:int, address:str = None):   #lop ==>  {proid
                 query = f"INSERT INTO orders VALUES({order_id}, '{cons_name}', {phno}, '{address or None}', '{json.dumps(sqlset)}', {total_amount_with_taxes}, {total_amount})"
                 cur.execute(query)
                 con.commit()
+                con.close()
                 print()
                 print("Order placed!")
                 print()
@@ -135,34 +127,8 @@ def place_order(cons_name:str, phno:int, address:str = None):   #lop ==>  {proid
             else:
                 continue
 
-    """
-    for product in list_of_products: 
-        if product in items:    #checking if product is listed in database, if stock = 0 then product will not be listed
-            if list_of_products[product] <= items[product][1]:   #checking if stock is avaible 
-                #product is avaiable
-                cost = items[product][3] + (items[product][3] * (items[product][4]/100))
-                total_amount += cost * list_of_products[product] #list_of_products[product] means the amount, like 2 
-                base_amount += items[product][3] * list_of_products[product]
-
-            else:
-                #use bool to ask for each loop,
-                #instead do doing it in this loop, subtract the product avaible from list_of_product to be what is in_stock
-                #TODO: ask if less is good, eg ordered 2 and 1 avaible, then ask if 1 is ok 
-                print("product is short on stock, the amount you've entred in not avaaible")
-        
-        else:
-            list_of_products.pop(product)
-            print(f'Product({product}) not found')
-
-    query = f"INSERT INTO orders VALUES({order_id}, '{cons_name}', {phno}, '{address or None}', '{json.dumps(list_of_products)}', {total_amount}, {base_amount})"
-    cur.execute(query)
-    con.commit()
-
-    con.close()"""
-
 def give_items():
     con, cur = connection('myseql', db='shop')
-    #cur = con.cursor()
 
     cur.execute('select * from inventory')
     data = cur.fetchall()
@@ -198,8 +164,6 @@ def perform_action(ipt):
 
     else:
         print("Please enter a valid number")
-
-    #ipt = input("Available action(use numbers to select):\n1: View Items\n2: Place Order\n3: Credits\n4: Exit\nAction:")
     
 def admin(): #admin commands, direct access to database and table, eval access for direct interpretation of code
     pswd = input("Enter password: ")
@@ -243,6 +207,5 @@ if __name__ == '__main__':
             perform_action(action)
             inner_loop = False
         q = input('Press Enter to continue...\n\n')
+        print()
         inner_loop = True
-        
-    #place_order('raju', 9927368361, {"ET04": 1, "EM03":1})
