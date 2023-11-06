@@ -11,7 +11,7 @@ def stnd_date(input_date:str, input_format:str = "%d-%m-%Y", output_format:str =
 
     return standard_date
 
-def check_database(mysql_connection) -> None:
+def check_database(cur) -> None:
     '''
     This function check database and tables.\n
     This function will make sure that the db and tables exists and are empty before entering any data.\n
@@ -27,8 +27,8 @@ def check_database(mysql_connection) -> None:
 
     if len(TABLES) != len(CREATE_TABLE): raise Exception("Table tally check failed\nlength of `TABLES` and `CREATE_TABLE` is not same") 
 
-    !issue
-    cur = mysql_connection.cursor()
+    #!issue
+    #con, cur = mysql_connection
 
     cur.execute("SHOW DATABASES;")  #CHEKING DATABASE
     for i in cur.fetchall():
@@ -54,7 +54,8 @@ def check_database(mysql_connection) -> None:
     #checking if the tables in database are same as what we need
     if set(temp_list_of_tables) == set(TABLES): #if yes, then clear the data of the table
         for i in temp_list_of_tables:
-            cur.execute(f"delete * from {i};")
+            
+            cur.execute(f"delete from {i};")
             cur.fetchall()
     else: #delete exisiting table and create new table for data to be entered in insert_data()
         if TABLES_EXIST:        #cheking in table exists in db, if yes then remove the tables, 
@@ -79,7 +80,7 @@ MODE = 'a' for automatic, i for inventory, o for order & e for employee table'''
     con, cur = connection('myseql')
     #cur = con.cursor()
 
-    check_database(con)
+    check_database(cur)
 
     path = f"bin/{FILENAME}"
     data = open(path, 'r').read().split('\n')
